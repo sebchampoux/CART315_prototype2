@@ -5,15 +5,20 @@ using UnityEngine;
 
 public class Dice : MonoBehaviour
 {
-    [SerializeField] private int numberOfFaces = 10;
-    private int[] faces;
-    private int currentFaceIndex = 0;
+    [SerializeField] private float _rollTime = 0.1f;
+    [SerializeField] private int _numberOfFaces = 10;
+    private int[] _faces;
+    private int _currentFaceIndex = 0;
+    private bool _isRolling = false;
 
     public event EventHandler FaceChange;
-
     public int CurrentFaceNumber
     {
-        get { return faces[currentFaceIndex]; }
+        get { return _faces[_currentFaceIndex]; }
+    }
+    public float RollTime
+    {
+        get { return _rollTime; }
     }
 
     protected virtual void OnFaceChange()
@@ -21,7 +26,7 @@ public class Dice : MonoBehaviour
         FaceChange?.Invoke(this, EventArgs.Empty);
     }
 
-    void Start()
+    void Awake()
     {
         CreateDiceFaces();
         RandomizeDiceFaces();
@@ -29,43 +34,47 @@ public class Dice : MonoBehaviour
 
     private void CreateDiceFaces()
     {
-        faces = new int[numberOfFaces];
-        for (int i = 0; i < numberOfFaces; i++)
+        _faces = new int[_numberOfFaces];
+        for (int i = 0; i < _numberOfFaces; i++)
         {
-            faces[i] = (i + 1);
+            _faces[i] = (i + 1);
         }
     }
 
     private void RandomizeDiceFaces()
     {
-        for (int i = faces.Length - 1; i > 1; i--)
+        for (int i = _faces.Length - 1; i > 1; i--)
         {
-            int k = UnityEngine.Random.Range(0, faces.Length - 1);
-            int toSwap = faces[k];
-            faces[k] = faces[i];
-            faces[i] = toSwap;
+            int k = UnityEngine.Random.Range(0, _faces.Length - 1);
+            int toSwap = _faces[k];
+            _faces[k] = _faces[i];
+            _faces[i] = toSwap;
         }
     }
 
     public IEnumerator RollDice()
     {
-        currentFaceIndex++;
-        if (currentFaceIndex == faces.Length)
+        _isRolling = true;
+        while (_isRolling)
         {
-            currentFaceIndex = 0;
+            ChangeCurrentFace();
+            yield return new WaitForSeconds(0.1f);
+        }
+        yield break;
+    }
+
+    private void ChangeCurrentFace()
+    {
+        _currentFaceIndex++;
+        if (_currentFaceIndex == _faces.Length)
+        {
+            _currentFaceIndex = 0;
         }
         OnFaceChange();
-        yield return null;
     }
 
-    public int HitDice()
+    public void HitDice()
     {
-        StopDiceRoll();
-        return 1;
-    }
-
-    private void StopDiceRoll()
-    {
-
+        _isRolling = false;
     }
 }
