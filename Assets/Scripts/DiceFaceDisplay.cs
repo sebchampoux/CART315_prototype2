@@ -7,14 +7,22 @@ using TMPro;
 public class DiceFaceDisplay : MonoBehaviour
 {
     [SerializeField] private Dice dice;
+    private TextMeshPro _textMesh;
 
     void Start()
     {
         dice.FaceChange += OnDiceFaceChanged;
+        _textMesh = GetComponent<TextMeshPro>();
+        UpdateFaceNumberDisplay(); // Set initial value
     }
 
     public void OnDiceFaceChanged(System.Object sender, EventArgs e)
     {
-        GetComponent<TextMeshPro>().text = dice.CurrentFaceNumber.ToString();
+        UpdateFaceNumberDisplay();
+    }
+
+    private void UpdateFaceNumberDisplay()
+    {
+        _textMesh.text = dice.CurrentFaceNumber.ToString();
     }
 }

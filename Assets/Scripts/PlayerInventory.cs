@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,6 +7,7 @@ public class PlayerInventory : MonoBehaviour
 {
     [SerializeField] private int _stars = 0;
     [SerializeField] private int _coins = 0;
+    public event EventHandler InventoryChange;
     public int Stars
     {
         get { return _stars; }
@@ -15,6 +17,11 @@ public class PlayerInventory : MonoBehaviour
     {
         get { return _coins; }
         private set { _coins = Mathf.Max(value, 0); }
+    }
+
+    protected virtual void OnInventoryChange()
+    {
+        InventoryChange?.Invoke(this, EventArgs.Empty);
     }
 
     public void AddCoins(int coins)
