@@ -23,29 +23,31 @@ public class SpacesTest
     [Test]
     public void TestBlueSpaceLand()
     {
-        PlayerInventory i = PlayerInventoryTest.CreatePlayerInventory();
+        GameObject player = PlayerInventoryTest.CreatePlayerGameObject();
         GameObject blueSpace = CreateBlueSpace();
 
         AbstractSpace blueSpaceComponent = blueSpace.GetComponent<AbstractSpace>();
-        blueSpaceComponent.StartCoroutine(blueSpaceComponent.OnPlayerLand(i));
-        Assert.AreEqual(i.Coins, 3);
+        blueSpaceComponent.StartCoroutine(blueSpaceComponent.OnPlayerLand(player));
+        Assert.AreEqual(3, player.GetComponent<PlayerInventory>().Coins);
     }
 
     [Test]
     public void TestRedSpaceLand()
     {
-        PlayerInventory i1 = PlayerInventoryTest.CreatePlayerInventory();
-        PlayerInventory i2 = PlayerInventoryTest.CreatePlayerInventory();
-        i1.AddCoins(10);
-        i2.AddCoins(2);
+        GameObject player1 = PlayerInventoryTest.CreatePlayerGameObject();
+        GameObject player2 = PlayerInventoryTest.CreatePlayerGameObject();
+        PlayerInventory pi1 = player1.GetComponent<PlayerInventory>();
+        PlayerInventory pi2 = player2.GetComponent<PlayerInventory>();
+        pi1.AddCoins(10);
+        pi2.AddCoins(2);
 
         GameObject redSpace = CreateRedSpace();
         AbstractSpace redSpaceComponent = redSpace.GetComponent<AbstractSpace>();
-        redSpaceComponent.StartCoroutine(redSpaceComponent.OnPlayerLand(i1));
-        redSpaceComponent.StartCoroutine(redSpaceComponent.OnPlayerLand(i2));
+        redSpaceComponent.StartCoroutine(redSpaceComponent.OnPlayerLand(player1));
+        redSpaceComponent.StartCoroutine(redSpaceComponent.OnPlayerLand(player2));
 
-        Assert.AreEqual(i1.Coins, 7);
-        Assert.AreEqual(i2.Coins, 0);
+        Assert.AreEqual(7, pi1.Coins);
+        Assert.AreEqual(0, pi2.Coins);
     }
 
     [Test]
@@ -55,6 +57,6 @@ public class SpacesTest
         GameObject space2 = CreateBlueSpace();
         GameObject edge = GraphTest.CreateEdge(space1, space2);
         AbstractSpace space1Component = space1.GetComponent<AbstractSpace>();
-        Assert.AreEqual(space1Component.GetNextSpace(), space2);
+        Assert.AreEqual(space2, space1Component.GetNextSpace());
     }
 }

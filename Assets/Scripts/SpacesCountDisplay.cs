@@ -7,7 +7,7 @@ using TMPro;
 public class SpacesCountDisplay : MonoBehaviour
 {
     private TextMeshPro _textMesh;
-    public PlayerMovement playerMovement;
+    public PlayerTurn playerTurn;
 
     private void Awake()
     {
@@ -21,7 +21,7 @@ public class SpacesCountDisplay : MonoBehaviour
 
     public void UpdateSpaceCountDisplay()
     {
-        if (playerMovement.CurrentDieRoll <= 0 && gameObject.activeSelf)
+        if (playerTurn.CurrentDieRoll <= 0 && gameObject.activeSelf)
         {
             gameObject.SetActive(false);
         }
@@ -29,6 +29,6 @@ public class SpacesCountDisplay : MonoBehaviour
         {
             gameObject.SetActive(true);
         }
-        _textMesh.text = playerMovement.CurrentDieRoll.ToString();
+        _textMesh.text = playerTurn.CurrentDieRoll.ToString();
     }
 }

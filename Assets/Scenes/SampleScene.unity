@@ -331,7 +331,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 117723715}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 92d52b541e3d9924eb620676c3e9619d, type: 3}
+  m_Script: {fileID: 11500000, guid: 3fdabc49c55f8ac4e8e2ec3ab85edcd4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   dicePrefab: {fileID: 2404053432531193582, guid: f0ad999cbe2409243933abc571b8eb22, type: 3}

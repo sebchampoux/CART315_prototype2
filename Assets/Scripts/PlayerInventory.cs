@@ -11,12 +11,20 @@ public class PlayerInventory : MonoBehaviour
     public int Stars
     {
         get { return _stars; }
-        private set { _stars = Mathf.Max(value, 0); }
+        private set
+        {
+            _stars = Mathf.Max(value, 0);
+            OnInventoryChange();
+        }
     }
     public int Coins
     {
         get { return _coins; }
-        private set { _coins = Mathf.Max(value, 0); }
+        private set
+        {
+            _coins = Mathf.Max(value, 0);
+            OnInventoryChange();
+        }
     }
 
     protected virtual void OnInventoryChange()

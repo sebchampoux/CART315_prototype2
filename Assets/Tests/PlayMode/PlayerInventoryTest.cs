@@ -6,6 +6,13 @@ using UnityEngine.TestTools;
 
 public class PlayerInventoryTest
 {
+    public static GameObject CreatePlayerGameObject()
+    {
+        GameObject player = new GameObject();
+        player.AddComponent<PlayerInventory>();
+        return player;
+    }
+
     public static PlayerInventory CreatePlayerInventory()
     {
         GameObject player = new GameObject();

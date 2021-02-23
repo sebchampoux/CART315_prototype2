@@ -44,7 +44,7 @@ public abstract class AbstractSpace : MonoBehaviour
         return null;
     }
 
-    public abstract IEnumerator OnPlayerPass(PlayerInventory p);
+    public abstract IEnumerator OnPlayerPass(GameObject player);
 
-    public abstract IEnumerator OnPlayerLand(PlayerInventory p);
+    public abstract IEnumerator OnPlayerLand(GameObject player);
 }

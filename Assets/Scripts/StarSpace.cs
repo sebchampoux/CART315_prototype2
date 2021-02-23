@@ -4,18 +4,17 @@ using UnityEngine;
 
 public class StarSpace : AbstractSpace
 {
-    [SerializeField] private int _numberOfStars = 1;
-    [SerializeField] private int _costOfStars = 20;
-    public override IEnumerator OnPlayerLand(PlayerInventory p)
+    // Commenté temporairement pour qu'il arrête de chialer -_-
+    //[SerializeField] private int _numberOfStars = 1;
+    //[SerializeField] private int _costOfStars = 20;
+
+    public override IEnumerator OnPlayerLand(GameObject player)
     {
-        yield return null;
+        throw new System.NotImplementedException();
     }
 
-    public override IEnumerator OnPlayerPass(PlayerInventory p)
+    public override IEnumerator OnPlayerPass(GameObject player)
     {
-        yield return null;
-        // Prompt for star
-        // If yes, add star to count
-        // Then change star space location
+        throw new System.NotImplementedException();
     }
 }
