@@ -6,7 +6,7 @@ using UnityEngine;
 public class PlayerInventory : MonoBehaviour
 {
     [SerializeField] private int _stars = 0;
-    [SerializeField] private int _coins = 0;
+    [SerializeField] private int _coins = 10;
     public event EventHandler InventoryChange;
     public int Stars
     {

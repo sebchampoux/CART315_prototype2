@@ -5,14 +5,16 @@ using UnityEngine;
 public class BlueSpace : AbstractSpace
 {
     [SerializeField] private int _coinsWonOnLand = 3;
+    public static readonly float WAIT_TIME_ON_LAND = 2.0f;
 
-    public override void OnPlayerLand(PlayerInventory p)
+    public override IEnumerator OnPlayerLand(PlayerInventory p)
     {
         p.AddCoins(_coinsWonOnLand);
+        yield return new WaitForSeconds(WAIT_TIME_ON_LAND);
     }
 
-    public override void OnPlayerPass(PlayerInventory p)
+    public override IEnumerator OnPlayerPass(PlayerInventory p)
     {
-        // Does nothing
+        yield return null;
     }
 }

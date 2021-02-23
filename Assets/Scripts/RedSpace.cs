@@ -5,13 +5,15 @@ using UnityEngine;
 public class RedSpace : AbstractSpace
 {
     [SerializeField] private int _coinsLostOnLand = 3;
-    public override void OnPlayerLand(PlayerInventory p)
+    public static readonly float WAIT_TIME_ON_LAND = 1.0f;
+    public override IEnumerator OnPlayerLand(PlayerInventory p)
     {
         p.RemoveCoins(_coinsLostOnLand);
+        yield return new WaitForSeconds(WAIT_TIME_ON_LAND);
     }
 
-    public override void OnPlayerPass(PlayerInventory p)
+    public override IEnumerator OnPlayerPass(PlayerInventory p)
     {
-        // Do nothing
+        yield return null;
     }
 }

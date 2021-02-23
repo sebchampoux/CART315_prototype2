@@ -26,7 +26,7 @@ public abstract class AbstractSpace : MonoBehaviour
         }
     }
 
-    public abstract void OnPlayerPass(PlayerInventory p);
+    public abstract IEnumerator OnPlayerPass(PlayerInventory p);
 
-    public abstract void OnPlayerLand(PlayerInventory p);
+    public abstract IEnumerator OnPlayerLand(PlayerInventory p);
 }
