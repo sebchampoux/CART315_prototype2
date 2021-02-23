@@ -11,9 +11,12 @@ public class PlayerTurn : MonoBehaviour
     public Vector3 positionRelativeToCurrentCell = new Vector3(0, 0, 0); // Position offset relative to the space position
     public Vector3 dicePositionRelToCharacter = new Vector3(0, 1.2f, 0); // Position relative to character position
     public event EventHandler SpacesCountChange;
-    
+
+    private GameObject _dice;
     private int _currentDieRoll = 0;
     private bool _dieIsRolling = false;
+    private Coroutine _dieRollingCoroutine = null;
+    private GameObject _spacesCountDisplay;
 
     public int CurrentDieRoll
     {
@@ -28,55 +31,82 @@ public class PlayerTurn : MonoBehaviour
 
     private void Start()
     {
-        transform.position = (currentSpace.transform.position + positionRelativeToCurrentCell);
+        PositionCharacterAtFirstSpace();
         StartCoroutine(PlayTurn());
+    }
+
+    private void PositionCharacterAtFirstSpace()
+    {
+        transform.position = currentSpace.transform.position + positionRelativeToCurrentCell;
     }
 
     public IEnumerator PlayTurn()
     {
-        GameObject dice = Instantiate(dicePrefab);
-        dice.transform.position = transform.position + dicePositionRelToCharacter;
-        Coroutine dieRolling = StartCoroutine(dice.GetComponent<Dice>().RollDice());
-
-        _dieIsRolling = true;
+        CreateDie();
+        RollDie();
         yield return new WaitWhile(() => _dieIsRolling);
+        StopDieRoll();
+        yield return new WaitForSeconds(1.5f); // Give some time to the player to see what he got
+        Destroy(_dice);
+        CreateSpacesCountDisplay();
+        while (_currentDieRoll > 0)
+        {
+            MoveToNextSpace();
+            IEnumerator currentSpacePassEvent = currentSpace.GetComponent<AbstractSpace>().OnPlayerPass(gameObject);
+            StartCoroutine(currentSpacePassEvent);
+            yield return new WaitForSeconds(0.5f);
+        }
+        IEnumerator currentSpaceLandEvent = currentSpace.GetComponent<AbstractSpace>().OnPlayerLand(gameObject);
+        StartCoroutine(currentSpaceLandEvent);
+        yield return null;
+    }
 
-        StopCoroutine(dieRolling);
-        _currentDieRoll = dice.GetComponent<Dice>().CurrentFaceNumber;
-        yield return new WaitForSeconds(1.0f); // Give some time to the player to see his roll
-        
-        Destroy(dice);
-        GameObject spacesCountDisplay = Instantiate(spacesCountDisplayPrefab);
-        SpacesCountDisplay spacesCountDisplayObserver = spacesCountDisplay.GetComponent<SpacesCountDisplay>();
+    private void CreateDie()
+    {
+        _dice = Instantiate(dicePrefab);
+        _dice.transform.position = transform.position + dicePositionRelToCharacter;
+    }
+
+    private void RollDie()
+    {
+        _dieIsRolling = true;
+        _dieRollingCoroutine = StartCoroutine(_dice.GetComponent<Dice>().RollDice());
+    }
+
+    private void StopDieRoll()
+    {
+        StopCoroutine(_dieRollingCoroutine);
+        _currentDieRoll = _dice.GetComponent<Dice>().CurrentFaceNumber;
+    }
+
+    private void CreateSpacesCountDisplay()
+    {
+        _spacesCountDisplay = Instantiate(spacesCountDisplayPrefab);
+
+        // Setup the SpacesCountDisplay component
+        SpacesCountDisplay spacesCountDisplayObserver = _spacesCountDisplay.GetComponent<SpacesCountDisplay>();
         spacesCountDisplayObserver.playerTurn = this;
         spacesCountDisplayObserver.UpdateSpaceCountDisplay();
         SpacesCountChange += spacesCountDisplayObserver.OnSpacesCountChange;
-        spacesCountDisplay.transform.SetParent(gameObject.transform);
-        spacesCountDisplay.transform.position = transform.position + dicePositionRelToCharacter;
 
-        while(_currentDieRoll > 0)
-        {
-            currentSpace = currentSpace.GetComponent<AbstractSpace>().GetNextSpace();
-            AbstractSpace currentSpaceComp = currentSpace.GetComponent<AbstractSpace>();
-
-            // Go to next space
-            transform.position = currentSpace.transform.position + positionRelativeToCurrentCell;
-            StartCoroutine(currentSpaceComp.OnPlayerPass(gameObject));
-
-            // Decrease dice block if applicable
-            if (currentSpaceComp.DecreasesDiceRoll)
-            {
-                _currentDieRoll--;
-                OnSpaceCountChange();
-                yield return new WaitForSeconds(0.5f);
-            }
-        }
-        StartCoroutine(currentSpace.GetComponent<AbstractSpace>().OnPlayerLand(gameObject));
-        yield return null;
+        // Position the display relatively to the player
+        _spacesCountDisplay.transform.SetParent(gameObject.transform);
+        _spacesCountDisplay.transform.position = transform.position + dicePositionRelToCharacter;
     }
 
     public void HitDie()
     {
         _dieIsRolling = false;
+    }
+
+    private void MoveToNextSpace()
+    {
+        currentSpace = currentSpace.GetComponent<AbstractSpace>().GetNextSpace();
+        iTween.MoveTo(gameObject, currentSpace.transform.position + positionRelativeToCurrentCell, 2f);
+        if (currentSpace.GetComponent<AbstractSpace>().DecreasesDiceRoll)
+        {
+            _currentDieRoll--;
+            OnSpaceCountChange();
+        }
     }
 }
