@@ -25,7 +25,9 @@ public class SpacesTest
     {
         PlayerInventory i = PlayerInventoryTest.CreatePlayerInventory();
         GameObject blueSpace = CreateBlueSpace();
-        blueSpace.GetComponent<AbstractSpace>().OnPlayerLand(i);
+
+        AbstractSpace blueSpaceComponent = blueSpace.GetComponent<AbstractSpace>();
+        blueSpaceComponent.StartCoroutine(blueSpaceComponent.OnPlayerLand(i));
         Assert.AreEqual(i.Coins, 3);
     }
 
@@ -38,10 +40,21 @@ public class SpacesTest
         i2.AddCoins(2);
 
         GameObject redSpace = CreateRedSpace();
-        redSpace.GetComponent<AbstractSpace>().OnPlayerLand(i1);
-        redSpace.GetComponent<AbstractSpace>().OnPlayerLand(i2);
+        AbstractSpace redSpaceComponent = redSpace.GetComponent<AbstractSpace>();
+        redSpaceComponent.StartCoroutine(redSpaceComponent.OnPlayerLand(i1));
+        redSpaceComponent.StartCoroutine(redSpaceComponent.OnPlayerLand(i2));
 
         Assert.AreEqual(i1.Coins, 7);
         Assert.AreEqual(i2.Coins, 0);
+    }
+
+    [Test]
+    public void TestGetNextSpace()
+    {
+        GameObject space1 = CreateBlueSpace();
+        GameObject space2 = CreateBlueSpace();
+        GameObject edge = GraphTest.CreateEdge(space1, space2);
+        AbstractSpace space1Component = space1.GetComponent<AbstractSpace>();
+        Assert.AreEqual(space1Component.GetNextSpace(), space2);
     }
 }
