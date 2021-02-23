@@ -15,6 +15,7 @@ public class BlueSpace : AbstractSpace
     public override IEnumerator OnPlayerLand(GameObject player)
     {
         player.GetComponent<PlayerInventory>().AddCoins(_coinsWonOnLand);
+        Debug.Log("You earned " + _coinsWonOnLand + " coins!");
         yield return new WaitForSeconds(WAIT_TIME_ON_LAND);
     }
 }

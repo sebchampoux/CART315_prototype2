@@ -15,6 +15,7 @@ public class RedSpace : AbstractSpace
     public override IEnumerator OnPlayerLand(GameObject player)
     {
         player.GetComponent<PlayerInventory>().RemoveCoins(_coinsLostOnLand);
+        Debug.Log("You lost " + _coinsLostOnLand + " coins!");
         yield return new WaitForSeconds(WAIT_TIME_ON_LAND);
     }
 }
