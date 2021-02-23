@@ -32,7 +32,6 @@ public class PlayerTurn : MonoBehaviour
     private void Start()
     {
         PositionCharacterAtFirstSpace();
-        StartCoroutine(PlayTurn());
     }
 
     private void PositionCharacterAtFirstSpace()
@@ -58,12 +57,14 @@ public class PlayerTurn : MonoBehaviour
         }
         IEnumerator currentSpaceLandEvent = currentSpace.GetComponent<AbstractSpace>().OnPlayerLand(gameObject);
         StartCoroutine(currentSpaceLandEvent);
+        DestroySpacesDisplay();
         yield return null;
     }
 
     private void CreateDie()
     {
         _dice = Instantiate(dicePrefab);
+        _dice.transform.SetParent(gameObject.transform);
         _dice.transform.position = transform.position + dicePositionRelToCharacter;
     }
 
@@ -82,18 +83,27 @@ public class PlayerTurn : MonoBehaviour
     private void CreateSpacesCountDisplay()
     {
         _spacesCountDisplay = Instantiate(spacesCountDisplayPrefab);
+        BindSpacesCountDisplayToTurn();
+        PositionSpacesCountDisplay();
+        _spacesCountDisplay.GetComponent<SpacesCountDisplay>().UpdateSpaceCountDisplay(); // Set initial value
+    }
 
-        // Setup the SpacesCountDisplay component
+    private void BindSpacesCountDisplayToTurn()
+    {
         SpacesCountDisplay spacesCountDisplayObserver = _spacesCountDisplay.GetComponent<SpacesCountDisplay>();
         spacesCountDisplayObserver.playerTurn = this;
-        spacesCountDisplayObserver.UpdateSpaceCountDisplay();
         SpacesCountChange += spacesCountDisplayObserver.OnSpacesCountChange;
+    }
 
-        // Position the display relatively to the player
+    private void PositionSpacesCountDisplay()
+    {
         _spacesCountDisplay.transform.SetParent(gameObject.transform);
         _spacesCountDisplay.transform.position = transform.position + dicePositionRelToCharacter;
     }
 
+    /// <summary>
+    /// Public method to bind to an input to stop die roll
+    /// </summary>
     public void HitDie()
     {
         _dieIsRolling = false;
@@ -108,5 +118,11 @@ public class PlayerTurn : MonoBehaviour
             _currentDieRoll--;
             OnSpaceCountChange();
         }
+    }
+
+    private void DestroySpacesDisplay()
+    {
+        SpacesCountChange -= _spacesCountDisplay.GetComponent<SpacesCountDisplay>().OnSpacesCountChange;
+        Destroy(_spacesCountDisplay);
     }
 }

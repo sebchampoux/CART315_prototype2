@@ -31,4 +31,9 @@ public class SpacesCountDisplay : MonoBehaviour
         }
         _textMesh.text = playerTurn.CurrentDieRoll.ToString();
     }
+
+    private void OnDestroy()
+    {
+        
+    }
 }
